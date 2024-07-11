@@ -4,6 +4,13 @@
 
 	<include name="${HXCPP}/src/hx/libs/ssl/Build.xml" />
 
+	<files id="hxcpp_ssl">
+
+		<compilerflag value="-DMBEDTLS_USER_CONFIG_FILE=&quot;${this_dir}/mbedtls_config.h&quot;" />
+		<compilerflag value="-DWIN32_LEAN_AND_MEAN" if="windows" />
+
+	</files>
+
 	<files id="main">
 
 		<file name="Main.cpp" />
