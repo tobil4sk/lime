@@ -140,6 +140,7 @@ jobs:
         run: |
           lime rebuild macos -clean -release -64 -nocolor -verbose -nocffi
           lime rebuild macos -clean -release -arm64 -nocolor -verbose -nocffi
+          lime rebuild macos -clean -release -64 -static -nocolor -verbose -nocffi
           lime rebuild hl -clean -release -nocolor -verbose -nocffi
 
       - uses: actions/upload-artifact@v4
@@ -177,12 +178,12 @@ jobs:
       - name: Build SimpleImage sample
         run: |
           lime create SimpleImage -verbose -nocolor
-          lime build SimpleImage macos -release -verbose -nocolor
+          lime build SimpleImage macos -static -release -verbose -nocolor
 
       - name: Build SimpleAudio sample
         run: |
           lime create SimpleAudio -verbose -nocolor
-          lime build SimpleAudio macos -release -verbose -nocolor
+          lime build SimpleAudio macos -static -release -verbose -nocolor
 
   windows:
     runs-on: windows-latest
