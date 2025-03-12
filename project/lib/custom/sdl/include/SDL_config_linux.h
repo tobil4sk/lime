@@ -75,6 +75,7 @@
 /* #undef HAVE_ALTIVEC_H */
 /* #undef HAVE_PTHREAD_NP_H */
 /* #undef HAVE_LIBUDEV_H */
+#define HAVE_LINUX_INPUT_H 1
 /* #undef HAVE_DBUS_DBUS_H */
 
 /* C library functions */
