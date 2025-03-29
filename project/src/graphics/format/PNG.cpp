@@ -78,6 +78,20 @@ namespace lime {
 
 	void user_flush_data (png_structp png_ptr) {}
 
+	static void user_read_file_handle_fn (png_structp png_ptr, png_bytep data, size_t length) {
+
+		size_t check;
+
+		if (png_ptr == NULL)
+			return;
+
+		check = lime::fread(data, 1, length, (lime::FILE_HANDLE*)png_ptr->io_ptr);
+
+		if (check != length)
+			png_error(png_ptr, "Read Error");
+
+	}
+
 
 	bool PNG::Decode (Resource *resource, ImageBuffer *imageBuffer, bool decodeData) {
 
@@ -96,6 +110,8 @@ namespace lime {
 
 			unsigned char png_sig[PNG_SIG_SIZE];
 			int read = lime::fread (&png_sig, PNG_SIG_SIZE, 1, file);
+			printf("Read %d\n", read);
+
 			if (png_sig_cmp (png_sig, 0, PNG_SIG_SIZE)) {
 
 				lime::fclose (file);
@@ -141,8 +157,8 @@ namespace lime {
 
 			if (file->isFile ()) {
 
-				png_init_io (png_ptr, file->getFile ());
 				png_set_sig_bytes (png_ptr, PNG_SIG_SIZE);
+				png_set_read_fn(png_ptr, file, user_read_file_handle_fn);
 
 			} else {
 

@@ -106,6 +106,8 @@ namespace lime {
 			Resize (size);
 			int status = lime::fread (b, 1, size, file);
 
+			printf("status %d\n", status);
+
 		}
 
 		lime::fclose (file);

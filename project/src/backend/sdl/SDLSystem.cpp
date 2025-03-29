@@ -32,10 +32,6 @@
 #endif
 #endif
 
-#ifdef ANDROID
-#include <android/asset_manager_jni.h>
-#endif
-
 #include <SDL.h>
 #include <string>
 
@@ -599,48 +595,6 @@ namespace lime {
 	}
 
 
-	FILE* FILE_HANDLE::getFile () {
-
-		#ifndef HX_WINDOWS
-
-		switch (((SDL_RWops*)handle)->type) {
-
-			case SDL_RWOPS_STDFILE:
-			{
-				#ifdef HAVE_STDIO_H
-				return ((SDL_RWops*)handle)->hidden.stdio.fp;
-				#else
-				#error Lime requires HAVE_STDIO_H
-				#endif
-			}
-			case SDL_RWOPS_JNIFILE:
-			{
-				#ifdef ANDROID
-				System::GCEnterBlocking ();
-				int fd;
-				off_t outStart;
-				off_t outLength;
-				fd = AAsset_openFileDescriptor ((AAsset*)(((SDL_RWops*)handle)->hidden.androidio.asset), &outStart, &outLength);
-				FILE* file = ::fdopen (fd, "rb");
-				::fseek (file, outStart, 0);
-				System::GCExitBlocking ();
-				return file;
-				#endif
-			}
-
-		}
-
-		return NULL;
-
-		#else
-
-		return (FILE*)handle;
-
-		#endif
-
-	}
-
-
 	int FILE_HANDLE::getLength () {
 
 		#ifndef HX_WINDOWS
@@ -703,44 +657,6 @@ namespace lime {
 		}
 
 		return 0;
-
-		#endif
-
-	}
-
-
-	FILE_HANDLE *fdopen (int fd, const char *mode) {
-
-		#ifndef HX_WINDOWS
-
-		System::GCEnterBlocking ();
-		FILE* fp = ::fdopen (fd, mode);
-		SDL_RWops *result = SDL_RWFromFP (fp, SDL_TRUE);
-		System::GCExitBlocking ();
-
-		if (result) {
-
-			return new FILE_HANDLE (result);
-
-		}
-
-		return NULL;
-
-		#else
-
-		FILE* result;
-
-		System::GCEnterBlocking ();
-		result = ::fdopen (fd, mode);
-		System::GCExitBlocking ();
-
-		if (result) {
-
-			return new FILE_HANDLE (result);
-
-		}
-
-		return NULL;
 
 		#endif
 

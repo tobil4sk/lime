@@ -4,6 +4,7 @@ extern "C" {
 	#include <sys/types.h>
 	#include <stdio.h>
 	#include <jpeglib.h>
+	#include "jerror.h"
 
 }
 
@@ -188,6 +189,91 @@ namespace lime {
 	};
 
 
+
+	/*
+		Based on project/lib/jpeg/jdatasrc.c, but uses FILE_HANDLE and lime::fread instead of FILE and fread
+	*/
+	struct FileHandleSrcManager {
+
+		#define INPUT_BUF_SIZE  4096    /* choose an efficiently fread'able size */
+
+		FileHandleSrcManager (FILE_HANDLE* handle) : handle (handle) {
+
+			pub.init_source = my_init_source;
+			pub.fill_input_buffer = my_fill_input_buffer;
+			pub.skip_input_data = my_skip_input_data;
+			pub.resync_to_restart = jpeg_resync_to_restart;
+			pub.term_source = my_term_source;
+			pub.next_input_byte = 0;
+			pub.bytes_in_buffer = 0;
+
+		}
+
+		struct jpeg_source_mgr pub;   /* public fields */
+		FILE_HANDLE* handle;          /* source stream */
+		JOCTET* buffer;               /* start of buffer */
+		boolean start_of_file;        /* have we gotten any data yet? */
+
+		static void my_init_source (j_decompress_ptr cinfo) {
+
+			FileHandleSrcManager *src = (FileHandleSrcManager *)cinfo->src;
+
+			src->start_of_file = TRUE;
+
+		}
+
+
+		static boolean my_fill_input_buffer (j_decompress_ptr cinfo) {
+			FileHandleSrcManager* src = (FileHandleSrcManager*)cinfo->src;
+			size_t nbytes;
+
+			nbytes = lime::fread(src->buffer, 1, INPUT_BUF_SIZE, src->handle);
+
+			if (nbytes <= 0) {
+				if (src->start_of_file)     /* Treat empty input file as fatal error */
+					ERREXIT(cinfo, JERR_INPUT_EMPTY);
+				WARNMS(cinfo, JWRN_JPEG_EOF);
+				/* Insert a fake EOI marker */
+				src->buffer[0] = (JOCTET)0xFF;
+				src->buffer[1] = (JOCTET)JPEG_EOI;
+				nbytes = 2;
+			}
+
+			src->pub.next_input_byte = src->buffer;
+			src->pub.bytes_in_buffer = nbytes;
+			src->start_of_file = FALSE;
+
+			return TRUE;
+		}
+
+
+		static void my_skip_input_data (j_decompress_ptr cinfo, long num_bytes) {
+
+			struct jpeg_source_mgr* src = cinfo->src;
+
+			/* Just a dumb implementation for now.  Could use fseek() except
+			 * it doesn't work on pipes.  Not clear that being smart is worth
+			 * any trouble anyway --- large skips are infrequent.
+			 */
+			if (num_bytes > 0) {
+				while (num_bytes > (long)src->bytes_in_buffer) {
+					num_bytes -= (long)src->bytes_in_buffer;
+					(void)(*src->fill_input_buffer) (cinfo);
+					/* note we assume that fill_input_buffer will never return FALSE,
+					 * so suspension need not be handled.
+					 */
+				}
+				src->next_input_byte += (size_t)num_bytes;
+				src->bytes_in_buffer -= (size_t)num_bytes;
+			}
+
+		}
+
+		static void my_term_source (j_decompress_ptr cinfo) {}
+
+	};
+
+
 	bool JPEG::Decode (Resource *resource, ImageBuffer* imageBuffer, bool decodeData) {
 
 		struct jpeg_decompress_struct cinfo;
@@ -203,6 +289,7 @@ namespace lime {
 		FILE_HANDLE *file = NULL;
 		Bytes *data = NULL;
 		MySrcManager *manager = NULL;
+		FileHandleSrcManager *fileHandleSrcManager = NULL;
 
 		if (resource->path) {
 
@@ -248,7 +335,8 @@ namespace lime {
 
 			if (file->isFile ()) {
 
-				jpeg_stdio_src (&cinfo, file->getFile ());
+				fileHandleSrcManager = new FileHandleSrcManager(file);
+				cinfo.src = &fileHandleSrcManager->pub;
 
 			} else {
 
@@ -403,6 +491,12 @@ namespace lime {
 		if (manager) {
 
 			delete manager;
+
+		}
+
+		if (fileHandleSrcManager) {
+
+			delete fileHandleSrcManager;
 
 		}
 

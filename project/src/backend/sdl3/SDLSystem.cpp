@@ -33,10 +33,6 @@
 #endif
 #endif
 
-#ifdef ANDROID
-#include <android/asset_manager_jni.h>
-#endif
-
 #include <SDL3/SDL.h>
 #include <string>
 
@@ -627,12 +623,6 @@ namespace lime {
 	}
 
 
-	FILE* FILE_HANDLE::getFile () {
-		return (FILE*)handle;
-
-	}
-
-
 	int FILE_HANDLE::getLength () {
 
 		#ifndef HX_WINDOWS
@@ -691,146 +681,6 @@ namespace lime {
 		#endif
 
 	}
-
-	// SDL_RWFromFP Impl from Migration Guide
-	#include <stdio.h>
-
-	typedef struct IOStreamStdioFPData
-	{
-		FILE *fp;
-		bool autoclose;
-	} IOStreamStdioFPData;
-
-	static Sint64 SDLCALL stdio_seek(void *userdata, Sint64 offset, SDL_IOWhence whence)
-	{
-		FILE *fp = ((IOStreamStdioFPData *) userdata)->fp;
-		int stdiowhence;
-
-		switch (whence) {
-		case SDL_IO_SEEK_SET:
-			stdiowhence = SEEK_SET;
-			break;
-		case SDL_IO_SEEK_CUR:
-			stdiowhence = SEEK_CUR;
-			break;
-		case SDL_IO_SEEK_END:
-			stdiowhence = SEEK_END;
-			break;
-		default:
-			SDL_SetError("Unknown value for 'whence'");
-			return -1;
-		}
-
-		if (fseek(fp, (long int)offset, stdiowhence) == 0) {
-			const Sint64 pos = ftell(fp);
-			if (pos < 0) {
-				SDL_SetError("Couldn't get stream offset");
-				return -1;
-			}
-			return pos;
-		}
-		SDL_SetError("Couldn't seek in stream");
-		return -1;
-	}
-
-	static size_t SDLCALL stdio_read(void *userdata, void *ptr, size_t size, SDL_IOStatus *status)
-	{
-		FILE *fp = ((IOStreamStdioFPData *) userdata)->fp;
-		const size_t bytes = fread(ptr, 1, size, fp);
-		if (bytes == 0 && ferror(fp)) {
-			SDL_SetError("Couldn't read stream");
-		}
-		return bytes;
-	}
-
-	static size_t SDLCALL stdio_write(void *userdata, const void *ptr, size_t size, SDL_IOStatus *status)
-	{
-		FILE *fp = ((IOStreamStdioFPData *) userdata)->fp;
-		const size_t bytes = fwrite(ptr, 1, size, fp);
-		if (bytes == 0 && ferror(fp)) {
-			SDL_SetError("Couldn't write stream");
-		}
-		return bytes;
-	}
-
-	static bool SDLCALL stdio_close(void *userdata)
-	{
-		IOStreamStdioFPData *rwopsdata = (IOStreamStdioFPData *) userdata;
-		bool status = true;
-		if (rwopsdata->autoclose) {
-			if (fclose(rwopsdata->fp) != 0) {
-				SDL_SetError("Couldn't close stream");
-				status = false;
-			}
-		}
-		return status;
-	}
-
-	SDL_IOStream *SDL_RWFromFP(FILE *fp, bool autoclose)
-	{
-		SDL_IOStreamInterface iface;
-		IOStreamStdioFPData *rwopsdata;
-		SDL_IOStream *rwops;
-
-		rwopsdata = (IOStreamStdioFPData *) SDL_malloc(sizeof (*rwopsdata));
-		if (!rwopsdata) {
-			return NULL;
-		}
-
-		SDL_INIT_INTERFACE(&iface);
-		/* There's no stdio_size because SDL_GetIOSize emulates it the same way we'd do it for stdio anyhow. */
-		iface.seek = stdio_seek;
-		iface.read = stdio_read;
-		iface.write = stdio_write;
-		iface.close = stdio_close;
-
-		rwopsdata->fp = fp;
-		rwopsdata->autoclose = autoclose;
-
-		rwops = SDL_OpenIO(&iface, rwopsdata);
-		if (!rwops) {
-			iface.close(rwopsdata);
-		}
-		return rwops;
-	}
-
-	FILE_HANDLE *fdopen (int fd, const char *mode) {
-
-		#ifndef HX_WINDOWS
-
-		System::GCEnterBlocking ();
-		FILE* fp = ::fdopen (fd, mode);
-		SDL_IOStream *result = SDL_RWFromFP (fp, true);
-		System::GCExitBlocking ();
-
-		if (result) {
-
-			return new FILE_HANDLE (result);
-
-		}
-
-		return NULL;
-
-		#else
-
-		FILE* result;
-
-		System::GCEnterBlocking ();
-		result = ::fdopen (fd, mode);
-		System::GCExitBlocking ();
-
-		if (result) {
-
-			return new FILE_HANDLE (result);
-
-		}
-
-		return NULL;
-
-		#endif
-
-	}
-
 
 	FILE_HANDLE *fopen (const char *filename, const char *mode) {
 
