@@ -395,6 +395,7 @@
 
 		<outdir name="${OUTPUT_DIR}/${BINDIR}" />
 
+		<files id="native-toolkit-pixman" if="LIME_PIXMAN" />
 		<files id="lime" />
 		<files id="android-cpufeatures" if="android" />
 
@@ -411,7 +412,6 @@
 		<files id="native-toolkit-neko" if="LIME_NEKO" />
 		<files id="native-toolkit-ogg" if="LIME_OGG" />
 		<files id="native-toolkit-openal" if="LIME_OPENALSOFT" />
-		<files id="native-toolkit-pixman" if="LIME_PIXMAN" />
 		<files id="native-toolkit-png" if="LIME_PNG" />
 		<files id="native-toolkit-sdl" if="LIME_SDL" unless="emscripten" />
 		<files id="native-toolkit-sdl_sound" if="LIME_SDL_SOUND" />
