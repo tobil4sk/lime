@@ -67,6 +67,7 @@
 		<file name="${NATIVE_TOOLKIT_PATH}/harfbuzz/src/hb-ot-var.cc" />
 		<file name="${NATIVE_TOOLKIT_PATH}/harfbuzz/src/hb-outline.cc" />
 		<file name="${NATIVE_TOOLKIT_PATH}/harfbuzz/src/hb-paint.cc" />
+		<file name="${NATIVE_TOOLKIT_PATH}/harfbuzz/src/hb-paint-bounded.cc" />
 		<file name="${NATIVE_TOOLKIT_PATH}/harfbuzz/src/hb-paint-extents.cc" />
 		<file name="${NATIVE_TOOLKIT_PATH}/harfbuzz/src/hb-set.cc" />
 		<file name="${NATIVE_TOOLKIT_PATH}/harfbuzz/src/hb-shape-plan.cc" />
