@@ -6,7 +6,7 @@
 
 	<files id="native-toolkit-pixman">
 
-		<compilerflag value="-fno-integrated-as" if="PIXMAN_ARM_A64_NEON NDKV18+" unless="NDKV20+" />
+		<compilerflag value="-fno-integrated-as" if="PIXMAN_ARM_A64_NEON NDKV18+ || PIXMAN_ARM_NEON ios" unless="NDKV20+" />
 
 		<compilerflag value="-I${NATIVE_TOOLKIT_PATH}/custom/pixman" />
 		<compilerflag value="-I${NATIVE_TOOLKIT_PATH}/custom/pixman/pixman" />
