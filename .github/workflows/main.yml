@@ -379,8 +379,13 @@ jobs:
           haxelib run lime setup -alias -y -nocffi
           haxelib run lime config AIR_SDK ${{ env.AIR_HOME }} -eval
 
+      - name: Rebuild Lime (WinRT)
+        run: |
+          lime rebuild winrt
+
       - name: Rebuild Lime (Windows)
         run: |
+          lime rebuild winrt
           lime rebuild windows -32 -release -nocolor -verbose -nocffi
           lime rebuild windows -64 -release -nocolor -verbose -nocffi
           lime rebuild hl -clean -release -nocolor -verbose -nocffi
