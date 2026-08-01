@@ -128,6 +128,7 @@
 		<file name="${NATIVE_TOOLKIT_PATH}/cairo/src/cairo-version.c" />
 		<file name="${NATIVE_TOOLKIT_PATH}/cairo/src/cairo-wideint.c" />
 		<file name="${NATIVE_TOOLKIT_PATH}/cairo/src/cairo.c" />
+    <file name="${NATIVE_TOOLKIT_PATH}/cairo/src/win32/cairo-win32-tmpfile.cpp" if="windows" />
 
 	</files>
 
