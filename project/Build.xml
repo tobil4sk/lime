@@ -116,6 +116,7 @@
 
 		<section if="LIME_FREETYPE">
 
+			<compilerflag value="-I${NATIVE_TOOLKIT_PATH}/custom/freetype/include/" />
 			<compilerflag value="-I${NATIVE_TOOLKIT_PATH}/freetype/include" />
 			<compilerflag value="-DLIME_FREETYPE" />
 
@@ -472,6 +473,8 @@
 				<lib name="RuntimeObject.lib" if="winrt" />
 				<lib name="Xinput.lib" if="winrt" />
 				<lib name="DXGI.lib" if="winrt" />
+				<lib name="Synchronization.lib" if="winrt" />
+				<lib name="Mmdevapi.lib" if="winrt" />
 
 				<lib name="-libpath:../templates/bin/hl/${BINDIR}" if="LIME_HASHLINK" />
 				<lib name="libhl.lib" if="LIME_HASHLINK" />

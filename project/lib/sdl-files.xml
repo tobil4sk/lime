@@ -476,15 +476,16 @@
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/haptic/windows/SDL_dinputhaptic.c" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/haptic/windows/SDL_windowshaptic.c" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/haptic/windows/SDL_xinputhaptic.c" />
-            <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/hidapi/windows/hid.c" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/joystick/windows/SDL_dinputjoystick.c" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/joystick/windows/SDL_windowsjoystick.c" />
+            <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/joystick/windows/SDL_windows_gaming_input.c" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/joystick/windows/SDL_xinputjoystick.c" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/loadso/windows/SDL_sysloadso.c" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/render/direct3d11/SDL_render_d3d11.c" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/render/direct3d12/SDL_render_d3d12.c" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/render/SDL_d3dmath.c" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/thread/generic/SDL_syscond.c" />
+            <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/thread/windows/SDL_syscond_cv.c" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/thread/windows/SDL_sysmutex.c" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/thread/windows/SDL_syssem.c" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/thread/windows/SDL_systhread.c" />
@@ -499,6 +500,7 @@
                 <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/misc/windows/SDL_sysurl.c" />
                 <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/power/windows/SDL_syspower.c" />
                 <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/render/direct3d/SDL_render_d3d.c" />
+                <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/hidapi/windows/hid.c" />
                 <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/video/windows/SDL_windowsclipboard.c" />
                 <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/video/windows/SDL_windowsevents.c" />
                 <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/video/windows/SDL_windowsframebuffer.c" />
@@ -524,6 +526,7 @@
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/core/winrt/SDL_winrtapp_direct3d.cpp" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/core/winrt/SDL_winrtapp_xaml.cpp" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/filesystem/winrt/SDL_sysfilesystem.cpp" />
+            <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/haptic/dummy/SDL_syshaptic.c" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/locale/winrt/SDL_syslocale.c" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/misc/winrt/SDL_sysurl.cpp" />
             <file name="${NATIVE_TOOLKIT_PATH}/sdl/src/power/winrt/SDL_syspower.cpp" />
